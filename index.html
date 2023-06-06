@@ -63,7 +63,7 @@
             },
             "api": {
               "method": "get",
-              "url": "${db_url}/samples?userid=${userid}",
+              "url": "${db_url}/getSamples?userid=${userid}",
               "requestAdaptor": "",
               "adaptor": "",
               "messages": {
@@ -262,6 +262,15 @@
                           "userid": "${userid}"
                         },
                         "body": [
+                          {
+                            "type": "service",
+                            "api": "get:${db_url}/newId?userid=${userid}",
+                            "body": {
+                              "type": "input-text",
+                              "name": "newId",
+                              "label": "Sample ID"
+                            }
+                          },
                           {
                             "type": "input-text",
                             "name": "name",
