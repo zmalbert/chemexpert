@@ -44,18 +44,36 @@
         // "initApi": "http://127.0.0.1:8000/wakeup",
         "data": {
           userid: 1,
-          // "db_url": "http://127.0.0.1:8000"
+          "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
         },
         "body": [
           {
             "label": "选项",
             "type": "select",
             "name": "db_url",
+            "actionType": "reload",
+            "target": "tableSamples",
             "options": [
+              "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
               "http://127.0.0.1:8000",
               "http://192.168.76.26:8000",
-              "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+              "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
             ],
+            "onEvent": {
+              "change": {
+                "actions": [
+                  {
+                    "actionType": "broadcast",
+                    "args": {
+                      "eventName": "broadcast_1"
+                    },
+                    "data": {
+                      "db_url": "${db_url}",
+                    }
+                  }
+                ]
+              }
+            }
           },
           {
             "type": "crud",
@@ -74,6 +92,41 @@
               },
               "dataType": "json"
             },
+            "defaultParams": {
+              // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+            },
+            "onEvent": {
+              "broadcast_1": {
+                "actions": [
+                  {
+                    "actionType": "reload",
+                    "data": {
+                      "db_url": "${db_url}"
+                    }
+                  },
+                ]
+              }
+            },
+            "headerToolbar": [
+              // {
+              //   "type": "action",
+              //   "align": "right",
+              //   "icon": "iconfont icon-refresh",
+              //   "label": "刷新(actionType)",
+              //   "tooltip": "",
+              //   "level": "primary",
+              //   "actionType": "reload",
+              //   "target": "tableSamples"
+              // },
+              {
+                "type": "reload",
+                "align": "right",
+                "icon": "iconfont icon-refresh",
+                // "label": "刷新(type)",
+                "tooltip": "",
+                "level": "primary"
+              }
+            ],
             "columns": [
               {
                 "name": "id",
