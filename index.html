@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="sdk.css" />
   <link rel="stylesheet" href="helper.css" />
   <link rel="stylesheet" href="iconfont.css" />
+  <link rel="stylesheet" href="QRCode.css" />
   <link rel="icon" href="image/icon/favicon.ico" type="image/x-icon" />
   <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
   <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
@@ -39,42 +40,47 @@
       let amisJSON = {
         "type": "page",
         "id": "page",
-        "title": "Test",
-        "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
-        // "initApi": "http://127.0.0.1:8000/wakeup",
+        "title": "ChemExpert",
+        // "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
+        "initApi": "http://127.0.0.1:8000/wakeup",
         "data": {
           userid: 1,
-          "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+          // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
+          "db_url": "http://127.0.0.1:8000"
         },
         "body": [
-          {
-            "label": "选项",
-            "type": "select",
-            "name": "db_url",
-            "actionType": "reload",
-            "target": "tableSamples",
-            "options": [
-              "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
-              "http://127.0.0.1:8000",
-              "http://192.168.76.26:8000",
-              "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
-            ],
-            "onEvent": {
-              "change": {
-                "actions": [
-                  {
-                    "actionType": "broadcast",
-                    "args": {
-                      "eventName": "broadcast_1"
-                    },
-                    "data": {
-                      "db_url": "${db_url}",
-                    }
-                  }
-                ]
-              }
-            }
-          },
+          // {
+          //   "label": "Server",
+          //   "type": "select",
+          //   "name": "db_url",
+          //   "actionType": "reload",
+          //   "target": "tableSamples",
+          //   "options": [
+          //     "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
+          //     "http://127.0.0.1:8000",
+          //     "http://192.168.76.26:8000",
+          //     "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
+          //   ],
+          //   "onEvent": {
+          //     "change": {
+          //       "actions": [
+          //         {
+          //           "actionType": "broadcast",
+          //           "args": {
+          //             "eventName": "broadcast_1"
+          //           },
+          //           "data": {
+          //             "db_url": "${db_url}",
+          //           }
+          //         }
+          //       ]
+          //     }
+          //   }
+          // },
+          // {
+          //   "type": "container",
+          //   "body": "<canvas class='sweepcanvas' id='canvas'></canvas>"
+          // },
           {
             "type": "crud",
             "name": "tableSamples",
@@ -88,22 +94,21 @@
               "url": "${db_url}/getSamples?userid=${userid}&keyword=${keyword}",
               "requestAdaptor": "",
               "adaptor": "",
-              "messages": {
-              },
+              "messages": {},
               "dataType": "json"
             },
             "defaultParams": {
               // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
             },
             "onEvent": {
-              "broadcast_1": {
+              "broadcast_reload_crud": {
                 "actions": [
                   {
                     "actionType": "reload",
                     "data": {
                       "db_url": "${db_url}"
                     }
-                  },
+                  }
                 ]
               }
             },
@@ -118,14 +123,14 @@
               //   "actionType": "reload",
               //   "target": "tableSamples"
               // },
-              {
-                "type": "reload",
-                "align": "right",
-                "icon": "iconfont icon-refresh",
-                // "label": "刷新(type)",
-                "tooltip": "",
-                "level": "primary"
-              }
+              // {
+              //   "type": "reload",
+              //   "align": "right",
+              //   "icon": "iconfont icon-refresh",
+              //   // "label": "刷新(type)",
+              //   "tooltip": "",
+              //   "level": "primary"
+              // }
             ],
             "columns": [
               {
@@ -217,15 +222,10 @@
                         }
                       ]
                     }
-                  }]
+                  }
+                ]
               }
             ],
-            // "bulkActions": [
-            // ],
-            // "itemActions": [
-            // ],
-            // "features": [
-            // ],
             "filterColumnCount": 3,
             "id": "u:35f269e0b4f4",
             "perPageAvailable": [
@@ -315,11 +315,13 @@
                         "body": {
                           "type": "form",
                           // "debug": true,
+                          "mode": "horizontal",
                           "title": "Sample Information",
                           "submitText": "",
                           "canAccessSuperData": false,
                           "api": "post:${db_url}/addSample",
                           "data": {
+                            "uuid": "",
                             "name": "${name}",
                             "base": "${base}",
                             "comment": "${comment}",
@@ -328,14 +330,20 @@
                             "sample_id": "${sample_id}"
                           },
                           "body": [
+                            "<canvas class='sweepcanvas' id='canvas'></canvas>",
                             {
-                              // "type": "service",
-                              // "api": "get:${db_url}/newId?userid=${userid}",
-                              // "body": {
                               "type": "input-text",
                               "name": "sample_id",
-                              "label": "Sample ID"
-                              // }
+                              "label": "Sample ID",
+                              "id": "sample_id_input",
+                              "addOn": {
+                                "name": "scan1",
+                                "label": "",
+                                "icon": "fa fa-qrcode",
+                                "type": "button",
+                                "onClick": "document.getElementById('canvas').requestFullscreen(); sweep(function(res){props.formStore.setValues({sample_id: res});document.exitFullScreen();});document.cancelFullScreen();",
+                                // "onClick": "document.getElementById('canvas').requestFullscreen(); sweep(function(res){props.formStore.setValues({sample_id: res});});exitFullScreen();",
+                              }
                             },
                             {
                               "type": "input-text",
@@ -357,7 +365,8 @@
                       }
                     },
                     "actionType": "dialog"
-                  }]
+                  }
+                ]
               },
               {
                 "type": "container",
@@ -365,12 +374,7 @@
                   {
                     "type": "button",
                     "label": "Scan",
-                    "onEvent": {
-                      "click": {
-                        "actions": [
-                        ]
-                      }
-                    },
+                    "onClick": "sweep('sample_id_1');",
                     "id": "u:a889ff681142",
                     "block": true,
                     "level": "primary"
@@ -420,7 +424,8 @@
         "toolbar": [
           {
             "type": "button",
-            "label": "Settings",
+            "label": "",
+            "icon": "fa fa-bars",
             "onEvent": {
               "click": {
                 "actions": [
@@ -434,32 +439,32 @@
                       "closeOnOutside": true,
                       "body": [
                         {
-                          "label": "选项",
+                          "label": "Server",
                           "type": "select",
                           "name": "db_url",
+                          "actionType": "reload",
+                          "target": "tableSamples",
                           "options": [
+                            "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
                             "http://127.0.0.1:8000",
-                            "http://192.168.76.26:8000"
+                            "http://192.168.76.26:8000",
+                            "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
                           ],
-                          // "onEvent": {
-                          //   "change": {
-                          //     "actions": [
-                          //       {
-                          //         "actionType": "setValue",
-                          //         "componentId": "tableSample",
-                          //         // "componentId": "tpl_url",
-                          //         // "componentId": "page",
-                          //         "args": {
-                          //           // "path": "appVariables.db_url1",
-                          //           "data": {
-                          //           // "api": {
-                          //             "db_url": "${db_url1}"
-                          //           }
-                          //         }
-                          //       }
-                          //     ]
-                          //   }
-                          // }
+                          "onEvent": {
+                            "change": {
+                              "actions": [
+                                {
+                                  "actionType": "broadcast",
+                                  "args": {
+                                    "eventName": "broadcast_reload_crud"
+                                  },
+                                  "data": {
+                                    "db_url": "${db_url}"
+                                  }
+                                }
+                              ]
+                            }
+                          }
                         }
                       ]
                     }
@@ -469,7 +474,7 @@
             },
             "id": "u:9fc6983eb6ed"
           }
-        ],
+        ]
       };
       let amisScoped = amis.embed(
         '#root',
@@ -480,6 +485,31 @@
       );
     })();
   </script>
+  <script src="./js/jimp.js"></script>
+  <script src="./js/jsqr.min.js"></script>
+  <script src="./js/base.js"></script>
+  <script>
+    function sweep(callback) {
+      const QrCode = new QrCodeRecognition({
+        sweepId: '#canvas',
+        // uploadId: '#file',
+        error: function (err) {
+        },
+        seuccess: function (res) {
+          callback(res.data);
+        }
+      });
+      // localStorage.setItem(out, "");
+      // result.value = '';
+      QrCode.sweep();
+    };
+    // 从相册选择
+    // function upload() {
+    //   result = '';
+    //   QrCode.upload();
+    // };
+  </script>
+
 </body>
 
 </html>
