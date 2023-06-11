@@ -41,13 +41,15 @@
         "type": "page",
         "id": "page",
         "title": "ChemExpert",
-        // "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
-        "initApi": "http://127.0.0.1:8000/wakeup",
         "data": {
           userid: 1,
           // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
-          "db_url": "http://127.0.0.1:8000"
+          // "db_url": "${ls:db_url}",
         },
+        "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
+        // "defaultParams": {
+        //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+        // },
         "body": [
           // {
           //   "label": "Server",
@@ -91,23 +93,23 @@
             },
             "api": {
               "method": "get",
-              "url": "${db_url}/getSamples?userid=${userid}&keyword=${keyword}",
+              "url": "${ls:db_url}/getSamples?userid=${userid}&keyword=${keyword}",
               "requestAdaptor": "",
               "adaptor": "",
               "messages": {},
               "dataType": "json"
             },
-            "defaultParams": {
-              // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
-            },
+            // "defaultParams": {
+            //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+            // },
             "onEvent": {
               "broadcast_reload_crud": {
                 "actions": [
                   {
                     "actionType": "reload",
-                    "data": {
-                      "db_url": "${db_url}"
-                    }
+                    // "data": {
+                    //   "db_url": "${db_url}"
+                    // }
                   }
                 ]
               }
@@ -132,6 +134,66 @@
               //   "level": "primary"
               // }
             ],
+            "itemAction": {
+              "type": "button",
+              "actionType": "dialog",
+              "dialog": {
+                "title": "Sample",
+                "body": {
+                  "type": "form",
+                  "api": "post:${ls:db_url}/modSample",
+                  "data": {
+                    "sample_id": "${id}",
+                    "name": "${name}",
+                    "base": "${base}",
+                    "comment": "${comment}",
+                    "obligated": 0,
+                    "userid": "${userid}"
+                  },
+                  "body": [
+                    {
+                      "type": "input-text",
+                      "name": "name",
+                      "label": "Name"
+                    },
+                    {
+                      "type": "input-text",
+                      "name": "base",
+                      "label": "Base"
+                    },
+                    {
+                      "type": "input-text",
+                      "name": "comment",
+                      "label": "Comment"
+                    }
+                  ]
+                },
+                "actions": [
+                  {
+                    "label": "Delete",
+                    "type": "button",
+                    "actionType": "ajax",
+                    "close": true,
+                    "reload": "tableSamples",
+                    "level": "danger",
+                    "confirmText": "Comfirm to delete?",
+                    "api": "get:${ls:db_url}/delSample?uuid=${uuid}&userid=${userid}&sample_id=${id}"
+                  },
+                  {
+                    "type": "button",
+                    "actionType": "confirm",
+                    "label": "Modify",
+                    "primary": true
+                  },
+                  {
+                    "type": "button",
+                    "actionType": "cancel",
+                    "label": "Cancel",
+                    "primary": false
+                  }
+                ]
+              }
+            },
             "columns": [
               {
                 "name": "id",
@@ -157,74 +219,74 @@
                 "name": "comment",
                 "id": "u:cf4f52636712"
               },
-              {
-                "type": "operation",
-                "label": "Modify",
-                "buttons": [
-                  {
-                    "type": "button",
-                    "label": "Modify",
-                    "level": "primary",
-                    "actionType": "dialog",
-                    "dialog": {
-                      "title": "Sample",
-                      "body": {
-                        "type": "form",
-                        "api": "post:${db_url}/modSample",
-                        "data": {
-                          "sample_id": "${id}",
-                          "name": "${name}",
-                          "base": "${base}",
-                          "comment": "${comment}",
-                          "obligated": 0,
-                          "userid": "${userid}"
-                        },
-                        "body": [
-                          {
-                            "type": "input-text",
-                            "name": "name",
-                            "label": "Name"
-                          },
-                          {
-                            "type": "input-text",
-                            "name": "base",
-                            "label": "Base"
-                          },
-                          {
-                            "type": "input-text",
-                            "name": "comment",
-                            "label": "Comment"
-                          }
-                        ]
-                      },
-                      "actions": [
-                        {
-                          "label": "Delete",
-                          "type": "button",
-                          "actionType": "ajax",
-                          "close": true,
-                          "reload": "tableSamples",
-                          "level": "danger",
-                          "confirmText": "Comfirm to delete?",
-                          "api": "get:${db_url}/delSample?uuid=${uuid}&userid=${userid}&sample_id=${id}"
-                        },
-                        {
-                          "type": "button",
-                          "actionType": "confirm",
-                          "label": "Modify",
-                          "primary": true
-                        },
-                        {
-                          "type": "button",
-                          "actionType": "cancel",
-                          "label": "Cancel",
-                          "primary": false
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
+              // {
+              //   "type": "operation",
+              //   "label": "Modify",
+              //   "buttons": [
+              //     {
+              //       "type": "button",
+              //       "label": "Modify",
+              //       "level": "primary",
+              //       "actionType": "dialog",
+              //       "dialog": {
+              //         "title": "Sample",
+              //         "body": {
+              //           "type": "form",
+              //           "api": "post:${db_url}/modSample",
+              //           "data": {
+              //             "sample_id": "${id}",
+              //             "name": "${name}",
+              //             "base": "${base}",
+              //             "comment": "${comment}",
+              //             "obligated": 0,
+              //             "userid": "${userid}"
+              //           },
+              //           "body": [
+              //             {
+              //               "type": "input-text",
+              //               "name": "name",
+              //               "label": "Name"
+              //             },
+              //             {
+              //               "type": "input-text",
+              //               "name": "base",
+              //               "label": "Base"
+              //             },
+              //             {
+              //               "type": "input-text",
+              //               "name": "comment",
+              //               "label": "Comment"
+              //             }
+              //           ]
+              //         },
+              //         "actions": [
+              //           {
+              //             "label": "Delete",
+              //             "type": "button",
+              //             "actionType": "ajax",
+              //             "close": true,
+              //             "reload": "tableSamples",
+              //             "level": "danger",
+              //             "confirmText": "Comfirm to delete?",
+              //             "api": "get:${db_url}/delSample?uuid=${uuid}&userid=${userid}&sample_id=${id}"
+              //           },
+              //           {
+              //             "type": "button",
+              //             "actionType": "confirm",
+              //             "label": "Modify",
+              //             "primary": true
+              //           },
+              //           {
+              //             "type": "button",
+              //             "actionType": "cancel",
+              //             "label": "Cancel",
+              //             "primary": false
+              //           }
+              //         ]
+              //       }
+              //     }
+              //   ]
+              // }
             ],
             "filterColumnCount": 3,
             "id": "u:35f269e0b4f4",
@@ -311,7 +373,7 @@
                       "title": "New sample",
                       "body": {
                         "type": "service",
-                        "api": "get:${db_url}/newId?userid=${userid}",
+                        "api": "get:${ls:db_url}/newId?userid=${userid}",
                         "body": {
                           "type": "form",
                           // "debug": true,
@@ -319,9 +381,9 @@
                           "title": "Sample Information",
                           "submitText": "",
                           "canAccessSuperData": false,
-                          "api": "post:${db_url}/addSample",
+                          "api": "post:${ls:db_url}/addSample",
                           "data": {
-                            "uuid": "",
+                            "uuid": 0,
                             "name": "${name}",
                             "base": "${base}",
                             "comment": "${comment}",
@@ -334,16 +396,7 @@
                             {
                               "type": "input-text",
                               "name": "sample_id",
-                              "label": "Sample ID",
-                              "id": "sample_id_input",
-                              "addOn": {
-                                "name": "scan1",
-                                "label": "",
-                                "icon": "fa fa-qrcode",
-                                "type": "button",
-                                "onClick": "document.getElementById('canvas').requestFullscreen(); sweep(function(res){props.formStore.setValues({sample_id: res});document.exitFullScreen();});document.cancelFullScreen();",
-                                // "onClick": "document.getElementById('canvas').requestFullscreen(); sweep(function(res){props.formStore.setValues({sample_id: res});});exitFullScreen();",
-                              }
+                              "label": "Sample ID"
                             },
                             {
                               "type": "input-text",
@@ -352,13 +405,26 @@
                             },
                             {
                               "type": "input-text",
-                              "name": "base",
-                              "label": "Base"
-                            },
-                            {
-                              "type": "input-text",
                               "name": "comment",
                               "label": "Comment"
+                            },
+                            {
+                              "type": "service",
+                              "api": "get:${ls:db_url}/searchUuid?uuid=${uuid}&userid=${userid}",
+                              "body":
+                              {
+                                "type": "input-text",
+                                "name": "base",
+                                "label": "Base",
+                                // "id": "sample_id_input",
+                                "addOn": {
+                                  "name": "scan1",
+                                  "label": "",
+                                  "icon": "fa fa-qrcode",
+                                  "type": "button",
+                                  "onClick": "sweep(props, 'uuid');"
+                                }
+                              },
                             }
                           ]
                         }
@@ -374,7 +440,7 @@
                   {
                     "type": "button",
                     "label": "Scan",
-                    "onClick": "sweep('sample_id_1');",
+                    "onClick": "sweep(props, sample_id);",
                     "id": "u:a889ff681142",
                     "block": true,
                     "level": "primary"
@@ -437,30 +503,49 @@
                     "drawer": {
                       "title": "Settings",
                       "closeOnOutside": true,
+                      "data": {
+                        "db_url": "${ls:db_url}"
+                      },
                       "body": [
                         {
                           "label": "Server",
                           "type": "select",
                           "name": "db_url",
-                          "actionType": "reload",
-                          "target": "tableSamples",
+                          // "actionType": "reload",
+                          // "target": "tableSamples",
                           "options": [
-                            "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
-                            "http://127.0.0.1:8000",
-                            "http://192.168.76.26:8000",
-                            "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
+                            {
+                              "label": "Production",
+                              "value": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+                            },
+                            {
+                              "label": "Development:127.0.0.1:8000",
+                              "value": "http://127.0.0.1:8000"
+                            },
+                            {
+                              "label": "Development:192.168.76.26:8000",
+                              "value": "http://192.168.76.26:8000"
+                            },
+                            {
+                              "label": "Development:aliyun-dev",
+                              "value": "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
+                            }
                           ],
                           "onEvent": {
                             "change": {
                               "actions": [
                                 {
+                                  "actionType": "custom",
+                                  "script": "localStorage.setItem('db_url', event.data.db_url);"
+                                },
+                                {
                                   "actionType": "broadcast",
                                   "args": {
                                     "eventName": "broadcast_reload_crud"
                                   },
-                                  "data": {
-                                    "db_url": "${db_url}"
-                                  }
+                                  // "data": {
+                                  //   "db_url": "${db_url}"
+                                  // }
                                 }
                               ]
                             }
@@ -489,14 +574,18 @@
   <script src="./js/jsqr.min.js"></script>
   <script src="./js/base.js"></script>
   <script>
-    function sweep(callback) {
+    function sweep(props, parname) {
+      document.getElementById('canvas').requestFullscreen();
       const QrCode = new QrCodeRecognition({
         sweepId: '#canvas',
         // uploadId: '#file',
         error: function (err) {
         },
         seuccess: function (res) {
-          callback(res.data);
+          var dic = {}
+          dic[parname] = res.data
+          props.formStore.setValues(dic);
+          document.exitFullscreen();
         }
       });
       // localStorage.setItem(out, "");
