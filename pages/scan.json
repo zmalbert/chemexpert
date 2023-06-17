@@ -1,0 +1,147 @@
+{
+  "type": "page",
+  "remark": null,
+  "data": {
+    "scan_uuid": "${ls:scan_uuid}",
+    "userid": 1
+  },
+  "initApi": "${ls:db_url}/wakeup",
+  "body": [
+    "<canvas class='sweepcanvas' id='canvas'></canvas>",
+    {
+      "type": "service",
+      "api": {
+        "method": "get",
+        "url": "${ls:db_url}/searchUuid?uuid=${scan_uuid}&userid=${userid}",
+        "_sendOn": "this.scan_uuid !== undefined && this.scan_uuid !== ''",
+        "_responseData": {}
+      },
+      "body": [
+        {
+          "type": "form",
+          "id": "scan_form",
+          "mode": "horizontal",
+          "title": "Sample Information",
+          "submitText": "",
+          "api": "post:${ls:db_url}/addSample",
+          "visibleOn": "${type==='samples'}",
+          "data": {
+            "uuid": "${uuid}",
+            "name": "${name}",
+            "base_uuid": 0,
+            "base": "${base}",
+            "comment": "${comment}",
+            "obsoleted": 0,
+            "userid": "${userid}",
+            "sample_id": "${sample_id}",
+            "loc_uuid": "${loc_uuid}"
+          },
+          "body": [
+            "<canvas class='sweepcanvas' id='canvas'></canvas>",
+            {
+              "type": "input-text",
+              "name": "uuid",
+              "label": "Label code",
+              "disabled": false,
+              "addOn": {
+                "name": "scan2",
+                "label": "",
+                "icon": "fa fa-qrcode",
+                "type": "button",
+                "onClick": "sweep(props, 'uuid');"
+              }
+            },
+            {
+              "type": "input-text",
+              "name": "name",
+              "label": "Name"
+            },
+            {
+              "type": "service",
+              "api": {
+                "method": "get",
+                "url": "${ls:db_url}/searchUuid?uuid=${loc_uuid}&userid=${userid}",
+                "responseData": {
+                  "location": "${location}",
+                  "loc_type": "${type}"
+                }
+              },
+              "body": [
+                {
+                  "type": "alert",
+                  "body": "Store point not found",
+                  "level": "warning",
+                  "showIcon": true,
+                  "className": "mb-1",
+                  "visibleOn": "${loc_type!=='locations'}"
+                },
+                {
+                  "type": "input-text",
+                  "name": "location",
+                  "label": "Location",
+                  "addOn": {
+                    "name": "scan1",
+                    "label": "",
+                    "icon": "fa fa-qrcode",
+                    "type": "button",
+                    "onClick": "sweep(props, 'loc_uuid');"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "input-text",
+              "name": "comment",
+              "label": "Comment"
+            },
+            {
+              "type": "service",
+              "api": {
+                "method": "get",
+                "url": "${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}",
+                "sendOn": "this.base_uuid !== undefined && this.base_uuid !== ''",
+                "responseData": {
+                  "base": "${id}",
+                  "sample_type": "${type}"
+                }
+              },
+              "body": [
+                {
+                  "type": "alert",
+                  "body": "Sample not found",
+                  "level": "warning",
+                  "showIcon": true,
+                  "className": "mb-1",
+                  "visibleOn": "${sample_type!=='samples'}"
+                },
+                {
+                  "type": "input-text",
+                  "name": "base",
+                  "label": "Base",
+                  "addOn": {
+                    "name": "scan1",
+                    "label": "",
+                    "icon": "fa fa-qrcode",
+                    "type": "button",
+                    "onClick": "sweep(props, 'base_uuid');"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "onEvent": {
+    "init": {
+      "actions": [
+        {
+          "script": "(async function () {await sweep(event, 'scan_uuid'); console.log(event);doAction({'actionType': 'reload', 'componentId': 'scan_form'});})();",
+          "script1": "sweep(event, 'scan_uuid');",
+          "actionType": "custom"
+        }
+      ]
+    }
+  }
+}

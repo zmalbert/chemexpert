@@ -1,22 +1,37 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html>
 
 <head>
   <meta charset="UTF-8" />
-  <title>ChemExpert</title>
-  <link rel="manifest" href="/manifest.json">
+  <title>CehmExpert</title>
+  <link rel="manifest" href="manifest.json">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-  <link rel="stylesheet" href="sdk.css" />
-  <link rel="stylesheet" href="helper.css" />
-  <link rel="stylesheet" href="iconfont.css" />
-  <link rel="stylesheet" href="QRCode.css" />
+  <!-- <link
+      rel="stylesheet"
+      title="default"
+      href="https://unpkg.com/amis@beta/sdk/sdk.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/amis@beta/sdk/helper.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/amis@beta/sdk/iconfont.css"
+    /> -->
+  <link rel="stylesheet" href="css/sdk.css" />
+  <link rel="stylesheet" href="css/helper.css" />
+  <link rel="stylesheet" href="css/iconfont.css" />
+  <link rel="stylesheet" href="css/QRCode.css" />
   <link rel="icon" href="image/icon/favicon.ico" type="image/x-icon" />
-  <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
-  <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
-  <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
-  <!-- 不过 amis 开发团队几乎没测试过 IE 11 下的效果，所以可能有细节功能用不了，如果发现请报 issue -->
+  <script src="js/sdk.js"></script>
+  <script src="js/vue.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/jimp.js"></script>
+  <script src="js/jsqr.min.js"></script>
+  <script src="js/base.js"></script>
   <style>
     html,
     body,
@@ -32,611 +47,181 @@
 
 <body>
   <div id="root" class="app-wrapper"></div>
-  <script src="sdk.js"></script>
-  <script type="text/javascript">
+  <script>
+    // 页面加载完之后，注册serviceWorker
+    window.addEventListener('load', async () => {
+      // 检测是否可用
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.register('/sw.js');
+          console.log("注册成功", registration)
+        } catch (e) {
+          console.log("注册失败", e)
+        }
+      }
+    });
+  </script>
+  <script>
     (function () {
       let amis = amisRequire('amis/embed');
-      // 通过替换下面这个配置来生成不同页面
-      let amisJSON = {
-        "type": "page",
-        "id": "page",
-        "title": "ChemExpert",
-        "data": {
-          userid: 1,
-          // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
-          // "db_url": "${ls:db_url}",
+      const match = amisRequire('path-to-regexp').match;
+
+      // 如果想用 browserHistory 请切换下这处代码, 其他不用变
+      // const history = History.createBrowserHistory();
+      const history = History.createHashHistory();
+
+      const app = {
+        type: 'app',
+        brandName: 'ChemExpert',
+        logo: 'public/logo.png',
+        header: {
+          type: 'tpl',
+          inline: false,
+          className: 'w-full',
+          // tpl: '<div class="flex justify-between"><div>顶部区域左侧</div><div>顶部区域右侧</div></div>'
         },
-        "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
-        // "defaultParams": {
-        //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
-        // },
-        "body": [
-          // {
-          //   "label": "Server",
-          //   "type": "select",
-          //   "name": "db_url",
-          //   "actionType": "reload",
-          //   "target": "tableSamples",
-          //   "options": [
-          //     "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
-          //     "http://127.0.0.1:8000",
-          //     "http://192.168.76.26:8000",
-          //     "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
-          //   ],
-          //   "onEvent": {
-          //     "change": {
-          //       "actions": [
-          //         {
-          //           "actionType": "broadcast",
-          //           "args": {
-          //             "eventName": "broadcast_1"
-          //           },
-          //           "data": {
-          //             "db_url": "${db_url}",
-          //           }
-          //         }
-          //       ]
-          //     }
-          //   }
-          // },
-          // {
-          //   "type": "container",
-          //   "body": "<canvas class='sweepcanvas' id='canvas'></canvas>"
-          // },
-          {
-            "type": "crud",
-            "name": "tableSamples",
-            "id": "tableSamples",
-            "syncLocation": false,
-            "data": {
-              "keyword": ""
-            },
-            "api": {
-              "method": "get",
-              "url": "${ls:db_url}/getSamples?userid=${userid}&keyword=${keyword}",
-              "requestAdaptor": "",
-              "adaptor": "",
-              "messages": {},
-              "dataType": "json"
-            },
-            // "defaultParams": {
-            //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
-            // },
-            "onEvent": {
-              "broadcast_reload_crud": {
-                "actions": [
-                  {
-                    "actionType": "reload",
-                    // "data": {
-                    //   "db_url": "${db_url}"
-                    // }
-                  }
-                ]
-              }
-            },
-            "headerToolbar": [
-              // {
-              //   "type": "action",
-              //   "align": "right",
-              //   "icon": "iconfont icon-refresh",
-              //   "label": "刷新(actionType)",
-              //   "tooltip": "",
-              //   "level": "primary",
-              //   "actionType": "reload",
-              //   "target": "tableSamples"
-              // },
-              // {
-              //   "type": "reload",
-              //   "align": "right",
-              //   "icon": "iconfont icon-refresh",
-              //   // "label": "刷新(type)",
-              //   "tooltip": "",
-              //   "level": "primary"
-              // }
-            ],
-            "itemAction": {
-              "type": "button",
-              "actionType": "dialog",
-              "dialog": {
-                "title": "Sample",
-                "body": {
-                  "type": "form",
-                  "api": "post:${ls:db_url}/modSample",
-                  "data": {
-                    "uuid": "${uuid}",
-                    "sample_id": "${id}",
-                    "name": "${name}",
-                    "base_uuid": "${base_uuid}",
-                    "base": "${base}",
-                    "comment": "${comment}",
-                    "obligated": 0,
-                    "userid": "${userid}"
-                  },
-                  "body": [
-                    "<canvas class='sweepcanvas' id='canvas'></canvas>",
-                    {
-                      "type": "input-text",
-                      "name": "uuid",
-                      "label": "Label code",
-                      "disabled": true
-                      // "id": "sample_id_input",
-                      // "addOn": {
-                      //   "name": "scan2",
-                      //   "label": "",
-                      //   "icon": "fa fa-qrcode",
-                      //   "type": "button",
-                      //   "onClick": "sweep(props, 'uuid');"
-                      // }
-                    },
-                    {
-                      "type": "input-text",
-                      "name": "name",
-                      "label": "Name"
-                    },
-                    {
-                      "type": "input-text",
-                      "name": "comment",
-                      "label": "Comment"
-                    },
-                    {
-                      "type": "service",
-                      // "api": "get:${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}&column=base",
-                      "api": {
-                        "method": "get",
-                        "url": "${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}",
-                        "responseData": {
-                          "base": "${id}",
-                          "name": "${name}",
-                          "comment": "${comment}"
-                        }
-                      },
-                      // "canAccessSuperData": false,
-                      "body":
-                      {
-                        "type": "input-text",
-                        "name": "base",
-                        "label": "Base",
-                        // "id": "sample_id_input",
-                        "addOn": {
-                          "name": "scan1",
-                          "label": "",
-                          "icon": "fa fa-qrcode",
-                          "type": "button",
-                          "onClick": "sweep(props, 'base_uuid');"
-                        }
-                      },
-                    }
-                  ]
-                },
-                "actions": [
-                  {
-                    "label": "Delete",
-                    "type": "button",
-                    "actionType": "ajax",
-                    "close": true,
-                    "reload": "tableSamples",
-                    "level": "danger",
-                    "confirmText": "Comfirm to delete?",
-                    "api": "get:${ls:db_url}/delSample?uuid=${uuid}&userid=${userid}&sample_id=${id}"
-                  },
-                  {
-                    "type": "button",
-                    "actionType": "confirm",
-                    "label": "Modify",
-                    "primary": true
-                  },
-                  {
-                    "type": "button",
-                    "actionType": "cancel",
-                    "label": "Cancel",
-                    "primary": false
-                  }
-                ]
-              }
-            },
-            "columns": [
-              {
-                "name": "id",
-                "label": "ID",
-                "type": "text",
-                "id": "u:79e627cdc6d8"
-              },
-              {
-                "name": "name",
-                "label": "Name",
-                "type": "text",
-                "id": "u:0e3318813013"
-              },
-              {
-                "type": "text",
-                "label": "Base",
-                "name": "base",
-                "id": "u:e42e298cd2c1"
-              },
-              {
-                "type": "text",
-                "label": "Comment",
-                "name": "comment",
-                "id": "u:cf4f52636712"
-              },
-              // {
-              //   "type": "operation",
-              //   "label": "Modify",
-              //   "buttons": [
-              //     {
-              //       "type": "button",
-              //       "label": "Modify",
-              //       "level": "primary",
-              //       "actionType": "dialog",
-              //       "dialog": {
-              //         "title": "Sample",
-              //         "body": {
-              //           "type": "form",
-              //           "api": "post:${db_url}/modSample",
-              //           "data": {
-              //             "sample_id": "${id}",
-              //             "name": "${name}",
-              //             "base": "${base}",
-              //             "comment": "${comment}",
-              //             "obligated": 0,
-              //             "userid": "${userid}"
-              //           },
-              //           "body": [
-              //             {
-              //               "type": "input-text",
-              //               "name": "name",
-              //               "label": "Name"
-              //             },
-              //             {
-              //               "type": "input-text",
-              //               "name": "base",
-              //               "label": "Base"
-              //             },
-              //             {
-              //               "type": "input-text",
-              //               "name": "comment",
-              //               "label": "Comment"
-              //             }
-              //           ]
-              //         },
-              //         "actions": [
-              //           {
-              //             "label": "Delete",
-              //             "type": "button",
-              //             "actionType": "ajax",
-              //             "close": true,
-              //             "reload": "tableSamples",
-              //             "level": "danger",
-              //             "confirmText": "Comfirm to delete?",
-              //             "api": "get:${db_url}/delSample?uuid=${uuid}&userid=${userid}&sample_id=${id}"
-              //           },
-              //           {
-              //             "type": "button",
-              //             "actionType": "confirm",
-              //             "label": "Modify",
-              //             "primary": true
-              //           },
-              //           {
-              //             "type": "button",
-              //             "actionType": "cancel",
-              //             "label": "Cancel",
-              //             "primary": false
-              //           }
-              //         ]
-              //       }
-              //     }
-              //   ]
-              // }
-            ],
-            "filterColumnCount": 3,
-            "id": "u:35f269e0b4f4",
-            "perPageAvailable": [
-              10
-            ],
-            // "messages": {
-            // },
-            "filter": {
-              // "debug": true,
-              "title": "Search",
-              "body": [
-                {
-                  "type": "group",
-                  "body": [
-                    {
-                      "type": "input-text",
-                      "name": "keyword",
-                      "label": "Keyword",
-                      "clearable": true,
-                      "size": "sm"
-                    }
-                  ]
-                }
-              ],
-              "actions": [
-                {
-                  "type": "reset",
-                  "label": "Reset"
-                },
-                {
-                  "type": "submit",
-                  "level": "primary",
-                  "label": "Search"
-                }
-              ]
-            },
-            "loadDataOnce": true
-          },
-          {
-            "type": "container",
-            "id": "u:228cea13e364",
-            "body": [
-              {
-                "type": "divider",
-                "id": "u:c902653ba98e"
-              }
-            ],
-            "style": {
-              "position": "static",
-              "display": "block"
-            },
-            "wrapperBody": false
-          },
-          {
-            "type": "flex",
-            "isSorptionContainer": true,
-            "sorptionPosition": "bottom",
-            "className": "p-1",
-            "items": [
-              {
-                "type": "container",
-                "size": "xs",
-                "style": {
-                  "position": "static",
-                  "display": "block",
-                  "flex": "1 1 auto",
-                  "flexGrow": 1,
-                  "flexBasis": "auto",
-                  "overflowY": "auto"
-                },
-                "wrapperBody": false,
-                "isFixedHeight": false,
-                "isFixedWidth": false,
-                "id": "u:3bbfb11ae6b9",
-                "body": [
-                  {
-                    "type": "button",
-                    "label": "Add",
-                    "id": "u:539d3153a40e",
-                    "size": "md",
-                    "block": true,
-                    "dialog": {
-                      "title": "New sample",
-                      "body": {
-                        "type": "service",
-                        "api": "get:${ls:db_url}/newId?userid=${userid}",
-                        "body": {
-                          "type": "form",
-                          // "debug": true,
-                          "mode": "horizontal",
-                          "title": "Sample Information",
-                          "submitText": "",
-                          "canAccessSuperData": false,
-                          "api": "post:${ls:db_url}/addSample",
-                          "data": {
-                            "uuid": "${uuid}",
-                            "name": "${name}",
-                            "base_uuid": 0,
-                            "base": "${base}",
-                            "comment": "${comment}",
-                            "obligated": 0,
-                            "userid": "${userid}",
-                            "sample_id": "${sample_id}"
-                          },
-                          "body": [
-                            "<canvas class='sweepcanvas' id='canvas'></canvas>",
-                            {
-                              "type": "input-text",
-                              "name": "uuid",
-                              "label": "Label code",
-                              // "id": "sample_id_input",
-                              "addOn": {
-                                "name": "scan2",
-                                "label": "",
-                                "icon": "fa fa-qrcode",
-                                "type": "button",
-                                "onClick": "sweep(props, 'uuid');"
-                              }
-                            },
-                            {
-                              "type": "input-text",
-                              "name": "sample_id",
-                              "label": "Sample ID"
-                            },
-                            {
-                              "type": "input-text",
-                              "name": "name",
-                              "label": "Name"
-                            },
-                            {
-                              "type": "input-text",
-                              "name": "comment",
-                              "label": "Comment"
-                            },
-                            {
-                              "type": "service",
-                              // "api": "get:${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}&column=base",
-                              "api": {
-                                "method": "get",
-                                "url": "${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}",
-                                "responseData": {
-                                  "base": "${id}",
-                                  "name": "${name}",
-                                  "comment": "${comment}"
-                                }
-                              },
-                              // "canAccessSuperData": false,
-                              "body":
-                              {
-                                "type": "input-text",
-                                "name": "base",
-                                "label": "Base",
-                                // "id": "sample_id_input",
-                                "addOn": {
-                                  "name": "scan1",
-                                  "label": "",
-                                  "icon": "fa fa-qrcode",
-                                  "type": "button",
-                                  "onClick": "sweep(props, 'base_uuid');"
-                                }
-                              },
-                            }
-                          ]
-                        }
-                      }
-                    },
-                    "actionType": "dialog"
-                  }
-                ]
-              },
-              {
-                "type": "container",
-                "body": [
-                  {
-                    "type": "button",
-                    "label": "Scan",
-                    "onClick": "sweep(props, sample_id);",
-                    "id": "u:a889ff681142",
-                    "block": true,
-                    "level": "primary"
-                  }
-                ],
-                "size": "xs",
-                "style": {
-                  "position": "static",
-                  "display": "block",
-                  "flex": "1 1 auto",
-                  "flexGrow": 1,
-                  "flexBasis": "auto"
-                },
-                "wrapperBody": false,
-                "isFixedHeight": false,
-                "isFixedWidth": false,
-                "id": "u:409b32d12f95"
-              }
-            ],
-            "style": {
-              "position": "fixed",
-              "inset": "auto auto 0 0",
-              "zIndex": 10,
-              "width": "100%",
-              "overflowX": "auto",
-              "margin": "0",
-              "overflowY": "auto",
-              "background": "#ffffff",
-              "flexWrap": "nowrap"
-            },
-            "isFixedWidth": true,
-            "isFixedHeight": false,
-            "originPosition": "right-bottom",
-            "id": "u:d85e2e6ad8d8"
-          }
-        ],
-        "id": "u:d227ad9ac00e",
-        "asideResizor": false,
-        "pullRefresh": {
-          "disabled": true
-        },
-        "regions": [
-          "body",
-          "toolbar",
-          "header"
-        ],
-        "toolbar": [
-          {
-            "type": "button",
-            "label": "",
-            "icon": "fa fa-bars",
-            "onEvent": {
-              "click": {
-                "actions": [
-                  {
-                    "label": "Settings",
-                    "type": "button",
-                    "actionType": "drawer",
-                    "icon": "fa fa-plus",
-                    "drawer": {
-                      "title": "Settings",
-                      "closeOnOutside": true,
-                      "data": {
-                        "db_url": "${ls:db_url}"
-                      },
-                      "body": [
-                        {
-                          "label": "Server",
-                          "type": "select",
-                          "name": "db_url",
-                          // "actionType": "reload",
-                          // "target": "tableSamples",
-                          "options": [
-                            {
-                              "label": "Production",
-                              "value": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
-                            },
-                            {
-                              "label": "Development:127.0.0.1:8000",
-                              "value": "http://127.0.0.1:8000"
-                            },
-                            {
-                              "label": "Development:192.168.76.26:8000",
-                              "value": "http://192.168.76.26:8000"
-                            },
-                            {
-                              "label": "Development:aliyun-dev",
-                              "value": "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
-                            }
-                          ],
-                          "onEvent": {
-                            "change": {
-                              "actions": [
-                                {
-                                  "actionType": "custom",
-                                  "script": "localStorage.setItem('db_url', event.data.db_url);"
-                                },
-                                {
-                                  "actionType": "broadcast",
-                                  "args": {
-                                    "eventName": "broadcast_reload_crud"
-                                  },
-                                  // "data": {
-                                  //   "db_url": "${db_url}"
-                                  // }
-                                }
-                              ]
-                            }
-                          }
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            },
-            "id": "u:9fc6983eb6ed"
-          }
-        ]
+        // footer: '<div class="p-2 text-center bg-light">底部区域</div>',
+        // asideBefore: '<div class="p-2 text-center">菜单前面区域</div>',
+        // asideAfter: '<div class="p-2 text-center">菜单后面区域</div>',
+        api: 'pages/site.json',
       };
-      let amisScoped = amis.embed(
-        '#root',
-        amisJSON,
-        {
-          locale: 'en-US'
+
+      function normalizeLink(to, location = history.location) {
+        to = to || '';
+
+        if (to && to[0] === '#') {
+          to = location.pathname + location.search + to;
+        } else if (to && to[0] === '?') {
+          to = location.pathname + to;
         }
+
+        const idx = to.indexOf('?');
+        const idx2 = to.indexOf('#');
+        let pathname = ~idx
+          ? to.substring(0, idx)
+          : ~idx2
+            ? to.substring(0, idx2)
+            : to;
+        let search = ~idx ? to.substring(idx, ~idx2 ? idx2 : undefined) : '';
+        let hash = ~idx2 ? to.substring(idx2) : location.hash;
+
+        if (!pathname) {
+          pathname = location.pathname;
+        } else if (pathname[0] != '/' && !/^https?\:\/\//.test(pathname)) {
+          let relativeBase = location.pathname;
+          const paths = relativeBase.split('/');
+          paths.pop();
+          let m;
+          while ((m = /^\.\.?\//.exec(pathname))) {
+            if (m[0] === '../') {
+              paths.pop();
+            }
+            pathname = pathname.substring(m[0].length);
+          }
+          pathname = paths.concat(pathname).join('/');
+        }
+
+        return pathname + search + hash;
+      }
+
+      function isCurrentUrl(to, ctx) {
+        if (!to) {
+          return false;
+        }
+        const pathname = history.location.pathname;
+        const link = normalizeLink(to, {
+          ...location,
+          pathname,
+          hash: ''
+        });
+
+        if (!~link.indexOf('http') && ~link.indexOf(':')) {
+          let strict = ctx && ctx.strict;
+          return match(link, {
+            decode: decodeURIComponent,
+            strict: typeof strict !== 'undefined' ? strict : true
+          })(pathname);
+        }
+
+        return decodeURI(pathname) === link;
+      }
+
+      let amisInstance = amis.embed(
+        '#root',
+        app,
+        {
+          location: history.location
+        },
+        {
+          // watchRouteChange: fn => {
+          //   return history.listen(fn);
+          // },
+          updateLocation: (location, replace) => {
+            location = normalizeLink(location);
+            if (location === 'goBack') {
+              return history.goBack();
+            } else if (
+              (!/^https?\:\/\//.test(location) &&
+                location ===
+                history.location.pathname + history.location.search) ||
+              location === history.location.href
+            ) {
+              // 目标地址和当前地址一样，不处理，免得重复刷新
+              return;
+            } else if (/^https?\:\/\//.test(location) || !history) {
+              return (window.location.href = location);
+            }
+
+            history[replace ? 'replace' : 'push'](location);
+          },
+          jumpTo: (to, action) => {
+            if (to === 'goBack') {
+              return history.goBack();
+            }
+
+            to = normalizeLink(to);
+
+            if (isCurrentUrl(to)) {
+              return;
+            }
+
+            if (action && action.actionType === 'url') {
+              action.blank === false
+                ? (window.location.href = to)
+                : window.open(to, '_blank');
+              return;
+            } else if (action && action.blank) {
+              window.open(to, '_blank');
+              return;
+            }
+
+            if (/^https?:\/\//.test(to)) {
+              window.location.href = to;
+            } else if (
+              (!/^https?\:\/\//.test(to) &&
+                to === history.pathname + history.location.search) ||
+              to === history.location.href
+            ) {
+              // do nothing
+            } else {
+              history.push(to);
+            }
+          },
+          isCurrentUrl: isCurrentUrl,
+          theme: 'cxd'
+        },
+        // {
+        //   locale: 'en-US'
+        // }
       );
+
+      history.listen(state => {
+        amisInstance.updateProps({
+          location: state.location || state
+        });
+      });
     })();
   </script>
-  <script src="./js/jimp.js"></script>
-  <script src="./js/jsqr.min.js"></script>
-  <script src="./js/base.js"></script>
   <script>
     function sweep(props, parname) {
       document.getElementById('canvas').requestFullscreen();
@@ -646,23 +231,29 @@
         error: function (err) {
         },
         seuccess: function (res) {
-          var dic = {}
-          dic[parname] = res.data
-          props.formStore.setValues(dic);
+          // if (!res.data.test(/c=([0-9]*)/)) {
+          //   return;
+          // }
+          var data = res.data.match(/c=([0-9]*)/)[1];
+          var dic = {};
+          dic[parname] = data;
           document.exitFullscreen();
+          // alert(res.data);
+          localStorage.setItem("scan_uuid", data);
+          props.formStore.setValues(dic);
+          // props.setData(dic);
         }
       });
       // localStorage.setItem(out, "");
       // result.value = '';
       QrCode.sweep();
     };
-    // 从相册选择
-    // function upload() {
-    //   result = '';
-    //   QrCode.upload();
-    // };
+        // 从相册选择
+        // function upload() {
+        //   result = '';
+        //   QrCode.upload();
+        // };
   </script>
-
 </body>
 
 </html>

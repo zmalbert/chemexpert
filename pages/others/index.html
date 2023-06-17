@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ChemExpert</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <link rel="stylesheet" href="sdk.css" />
+  <link rel="stylesheet" href="helper.css" />
+  <link rel="stylesheet" href="iconfont.css" />
+  <link rel="stylesheet" href="QRCode.css" />
+  <link rel="icon" href="image/icon/favicon.ico" type="image/x-icon" />
+  <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
+  <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
+  <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
+  <!-- 不过 amis 开发团队几乎没测试过 IE 11 下的效果，所以可能有细节功能用不了，如果发现请报 issue -->
+  <style>
+    html,
+    body,
+    .app-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root" class="app-wrapper"></div>
+  <script src="sdk.js"></script>
+  <script type="text/javascript">
+    (function () {
+      let amis = amisRequire('amis/embed');
+      // 通过替换下面这个配置来生成不同页面
+      let amisJSON = {
+        "type": "page",
+        "title": "ChemExpert",
+        // "defaultParams": {
+        //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+        // },
+        "body": [
+          {
+            "type": "flex",
+            "id": "u:d85e2e6ad8d8",
+            "isSorptionContainer": true,
+            "sorptionPosition": "bottom",
+            "className": "p-1",
+            "items": [
+              {
+                "type": "container",
+                "size": "xs",
+                "style": {
+                  "position": "static",
+                  "display": "flex",
+                  "flex": "1 1 auto",
+                  "flexGrow": 1,
+                  "flexBasis": "auto",
+                  "overflowX": "auto",
+                  "flexWrap": "nowrap",
+                  "justifyContent": "flex-end"
+                },
+                "wrapperBody": false,
+                "isFixedHeight": false,
+                "isFixedWidth": false,
+                "id": "u:409b32d12f95",
+                "body": [
+                  {
+                    "type": "button",
+                    "id": "u:a889ff681142",
+                    "block": false,
+                    "onClick": "sweep(props, sample_id);",
+                    "level": "primary",
+                    "size": "lg",
+                    "icon": "fa fa-qrcode",
+                    "label": "Scan"
+                  }
+                ]
+              }
+            ],
+            "style": {
+              "position": "fixed",
+              "inset": "auto auto 0 0",
+              "zIndex": 10,
+              "width": "100%",
+              "overflowX": "auto",
+              "margin": "0",
+              "overflowY": "auto",
+              "background": "rgba(255, 255, 255, 0)",
+              "flexWrap": "nowrap"
+            },
+            "isFixedWidth": true,
+            "isFixedHeight": false,
+            "originPosition": "right-bottom"
+          },
+          {
+            "type": "flex",
+            "className": "p-1",
+            "items": [
+              {
+                "type": "container",
+                "body": [
+                  {
+                    "type": "button",
+                    "label": "",
+                    "onEvent": {
+                      "click": {
+                        "actions": [
+                          {
+                            "actionType": "url",
+                            "args": {
+                              "url": "/samples.html"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "id": "u:e92ca5ded43f",
+                    "size": "lg",
+                    "level": "primary",
+                    "block": false,
+                    "icon": "fa fa-vials fa-5x",
+                    "themeCss": {
+                      "className": {
+                        "padding-and-margin:default": {
+                          "marginTop": "0.5rem",
+                          "marginRight": "0.5rem",
+                          "marginBottom": "0.5rem",
+                          "marginLeft": "0.5rem"
+                        }
+                      }
+                    },
+                    "className": "className-e92ca5ded43f"
+                  },
+                  {
+                    "type": "tpl",
+                    "tpl": "Samples",
+                    "inline": true,
+                    "wrapperComponent": "",
+                    "id": "u:10450d4a5972"
+                  }
+                ],
+                "size": "xs",
+                "style": {
+                  "position": "static",
+                  "display": "flex",
+                  "flex": "1 1 auto",
+                  "flexGrow": 1,
+                  "flexBasis": "auto",
+                  "flexWrap": "nowrap",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "flexDirection": "column"
+                },
+                "wrapperBody": false,
+                "isFixedHeight": false,
+                "isFixedWidth": false,
+                "id": "u:313b6ac052d1"
+              },
+              {
+                "type": "container",
+                "body": [
+                  {
+                    "type": "button",
+                    "label": "",
+                    "onEvent": {
+                      "click": {
+                        "actions": [
+                        ]
+                      }
+                    },
+                    "id": "u:e92ca5ded43f",
+                    "size": "lg",
+                    "level": "primary",
+                    "block": false,
+                    "icon": "fa fa-box-open fa-5x",
+                    "themeCss": {
+                      "className": {
+                        "padding-and-margin:default": {
+                          "marginTop": "0.5rem",
+                          "marginRight": "0.5rem",
+                          "marginBottom": "0.5rem",
+                          "marginLeft": "0.5rem"
+                        }
+                      }
+                    },
+                    "className": "className-e92ca5ded43f"
+                  },
+                  {
+                    "type": "tpl",
+                    "tpl": "Locations",
+                    "inline": true,
+                    "wrapperComponent": "",
+                    "id": "u:10450d4a5972"
+                  }
+                ],
+                "size": "xs",
+                "style": {
+                  "position": "static",
+                  "display": "flex",
+                  "flex": "1 1 auto",
+                  "flexGrow": 1,
+                  "flexBasis": "auto",
+                  "flexWrap": "nowrap",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "flexDirection": "column"
+                },
+                "wrapperBody": false,
+                "isFixedHeight": false,
+                "isFixedWidth": false,
+                "id": "u:313b6ac052d1"
+              },
+              {
+                "type": "container",
+                "body": [
+                  {
+                    "type": "button",
+                    "label": "",
+                    "onEvent": {
+                      "click": {
+                        "actions": [
+                        ]
+                      }
+                    },
+                    "id": "u:e92ca5ded43f",
+                    "size": "lg",
+                    "level": "primary",
+                    "block": false,
+                    "icon": "fa fa-list fa-5x",
+                    "themeCss": {
+                      "className": {
+                        "padding-and-margin:default": {
+                          "marginTop": "0.5rem",
+                          "marginRight": "0.5rem",
+                          "marginBottom": "0.5rem",
+                          "marginLeft": "0.5rem"
+                        }
+                      }
+                    },
+                    "className": "className-e92ca5ded43f"
+                  },
+                  {
+                    "type": "tpl",
+                    "tpl": "Locations",
+                    "inline": true,
+                    "wrapperComponent": "",
+                    "id": "u:10450d4a5972"
+                  }
+                ],
+                "size": "xs",
+                "style": {
+                  "position": "static",
+                  "display": "flex",
+                  "flex": "1 1 auto",
+                  "flexGrow": 1,
+                  "flexBasis": "auto",
+                  "flexWrap": "nowrap",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "flexDirection": "column"
+                },
+                "wrapperBody": false,
+                "isFixedHeight": false,
+                "isFixedWidth": false,
+                "id": "u:313b6ac052d1"
+              }
+            ],
+            "style": {
+              "position": "relative"
+            },
+            "id": "u:4e86ac1cc169"
+          },
+          {
+            "type": "divider",
+            "id": "u:ba0e8c37bbed"
+          },
+          {
+            "type": "container",
+            "body": [
+              {
+                "type": "cards",
+                "data": {
+                  "items": [
+                    {
+                      "a": 1,
+                      "b": 2
+                    },
+                    {
+                      "a": 3,
+                      "b": 4
+                    }
+                  ]
+                },
+                "columnsCount": 2,
+                "card": {
+                  "type": "card",
+                  "className": "m-b-none",
+                  "header": {
+                    "title": "标题",
+                    "subTitle": "副标题"
+                  },
+                  "body": [
+                    {
+                      "name": "a",
+                      "label": "A"
+                    },
+                    {
+                      "name": "b",
+                      "label": "B"
+                    }
+                  ],
+                  "actions": [
+                    {
+                      "label": "详情",
+                      "type": "button",
+                      "id": "u:f62a875c2e24"
+                    }
+                  ],
+                  "id": "u:fa53d660baa4"
+                },
+                "id": "u:e3e28d4e7a26"
+              }
+            ],
+            "style": {
+              "position": "static",
+              "display": "block"
+            },
+            "wrapperBody": false,
+            "id": "u:bb6f82366842"
+          },
+          {
+            "type": "divider",
+            "id": "u:751217ebbe40"
+          },
+          {
+            "type": "container",
+            "body": [
+            ],
+            "style": {
+              "position": "static",
+              "display": "block"
+            },
+            "wrapperBody": false,
+            "id": "u:8780f11e8604"
+          },
+          {
+            "type": "divider",
+            "id": "u:28ed04f4d329"
+          },
+          {
+            "type": "container",
+            "body": [
+            ],
+            "style": {
+              "position": "static",
+              "display": "block"
+            },
+            "wrapperBody": false,
+            "id": "u:997e8d8d9b3a"
+          }
+        ],
+        "id": "u:d227ad9ac00e",
+        "asideResizor": false,
+        "pullRefresh": {
+          "disabled": true
+        },
+        "regions": [
+          "body",
+          "toolbar",
+          "header"
+        ],
+        "data": {
+        },
+        "toolbar": [
+          {
+            "type": "button",
+            "label": "",
+            "onEvent": {
+              "click": {
+                "actions": [
+                  {
+                    "label": "Settings",
+                    "type": "button",
+                    "actionType": "drawer",
+                    "icon": "fa fa-plus",
+                    "drawer": {
+                      "title": "Settings",
+                      "body": [
+                        {
+                          "label": "Server",
+                          "type": "select",
+                          "name": "db_url",
+                          // "actionType": "reload",
+                          // "target": "tableSamples",
+                          "options": [
+                            {
+                              "label": "Production",
+                              "value": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+                            },
+                            {
+                              "label": "Development:127.0.0.1:8000",
+                              "value": "http://127.0.0.1:8000"
+                            },
+                            {
+                              "label": "Development:192.168.76.26:8000",
+                              "value": "http://192.168.76.26:8000"
+                            },
+                            {
+                              "label": "Development:aliyun-dev",
+                              "value": "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
+                            }
+                          ],
+                          "onEvent": {
+                            "change": {
+                              "actions": [
+                                {
+                                  "actionType": "custom",
+                                  "script": "localStorage.setItem('db_url', event.data.db_url);"
+                                },
+                                {
+                                  "actionType": "broadcast",
+                                  "args": {
+                                    "eventName": "broadcast_reload_crud"
+                                  }
+                                  // "data": {
+                                  //   "db_url": "${db_url}"
+                                  // }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ],
+                      "closeOnOutside": true,
+                      "data": {
+                        "db_url": "${ls:db_url}"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "id": "u:9fc6983eb6ed",
+            "icon": "fa fa-bars"
+          }
+        ],
+        "style": {
+          "background": "rgba(244, 134, 134, 0)"
+        }
+      };
+      let amisScoped = amis.embed(
+        '#root',
+        amisJSON,
+        {
+          locale: 'en-US'
+        }
+      );
+    })();
+  </script>
+  <script src="./js/jimp.js"></script>
+  <script src="./js/jsqr.min.js"></script>
+  <script src="./js/base.js"></script>
+  <script>
+    function sweep(props, parname) {
+      document.getElementById('canvas').requestFullscreen();
+      const QrCode = new QrCodeRecognition({
+        sweepId: '#canvas',
+        // uploadId: '#file',
+        error: function (err) {
+        },
+        seuccess: function (res) {
+          var dic = {}
+          dic[parname] = res.data
+          props.formStore.setValues(dic);
+          document.exitFullscreen();
+        }
+      });
+      // localStorage.setItem(out, "");
+      // result.value = '';
+      QrCode.sweep();
+    };
+    // 从相册选择
+    // function upload() {
+    //   result = '';
+    //   QrCode.upload();
+    // };
+  </script>
+
+</body>
+
+</html>

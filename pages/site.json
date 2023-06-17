@@ -1,0 +1,64 @@
+{
+  "status": 0,
+  "msg": "",
+  "data": {
+    "pages": [
+      {
+        "label": "",
+        "children": [
+          {
+            "label": "Welcome",
+            "url": "/",
+            "icon": "fa fa-home",
+            "schemaApi": "get:./pages/index.json"
+          }
+        ]
+      },
+      {
+        "label": "Samples Managment",
+        "children": [
+          {
+            "label": "Samples",
+            "url": "/samples",
+            "icon": "fa fa-flask",
+            "schemaApi": "get:./pages/samples.json"
+          },
+          {
+            "label": "Store Points",
+            "url": "/strore-points",
+            "icon": "fa fa-map-marker",
+            "schemaApi": "get:./pages/locations.json"
+          },
+          {
+            "lable": "Scan",
+            "url": "/scan",
+            "schemaApi": "get:./pages/scan.json",
+            "disabled": true
+          }
+        ]
+      },
+      {
+        "label": "Tasks",
+        "children": [
+          {
+            "label": "Tasks",
+            "icon": "fa fa-tasks",
+            "url": "/Tasks",
+            "schemaApi": "get:./pages/tasks.json"
+          }
+        ]
+      },
+      {
+        "label": "",
+        "children": [
+          {
+            "label": "Settings",
+            "url": "/Settings",
+            "icon": "fa fa-cogs",
+            "schemaApi": "get:./pages/settings.json"
+          }
+        ]
+      }
+    ]
+  }
+}

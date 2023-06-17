@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>ChemExpert</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <link rel="stylesheet" href="sdk.css" />
+  <link rel="stylesheet" href="helper.css" />
+  <link rel="stylesheet" href="iconfont.css" />
+  <link rel="stylesheet" href="QRCode.css" />
+  <link rel="icon" href="image/icon/favicon.ico" type="image/x-icon" />
+  <!-- 这是默认主题所需的，如果是其他主题则不需要 -->
+  <!-- 从 1.1.0 开始 sdk.css 将不支持 IE 11，如果要支持 IE11 请引用这个 css，并把前面那个删了 -->
+  <!-- <link rel="stylesheet" href="sdk-ie11.css" /> -->
+  <!-- 不过 amis 开发团队几乎没测试过 IE 11 下的效果，所以可能有细节功能用不了，如果发现请报 issue -->
+  <style>
+    html,
+    body,
+    .app-wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root" class="app-wrapper"></div>
+  <script src="sdk.js"></script>
+  <script type="text/javascript">
+    (function () {
+      let amis = amisRequire('amis/embed');
+      // 通过替换下面这个配置来生成不同页面
+      let amisJSON = {
+        "type": "page",
+        "id": "page",
+        "title": "ChemExpert",
+        "data": {
+          userid: 1,
+          // "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run",
+          // "db_url": "${ls:db_url}",
+        },
+        "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
+        // "defaultParams": {
+        //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+        // },
+        "body": [
+          {
+            "type": "crud",
+            "name": "tableSamples",
+            "id": "tableSamples",
+            "syncLocation": false,
+            "data": {
+              "keyword": ""
+            },
+            "api": {
+              "method": "get",
+              "url": "${ls:db_url}/getSamples?userid=${userid}&keyword=${keyword}",
+              "requestAdaptor": "",
+              "adaptor": "",
+              "messages": {},
+              "dataType": "json"
+            },
+            // "defaultParams": {
+            //   "db_url": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+            // },
+            "onEvent": {
+              "broadcast_reload_crud": {
+                "actions": [
+                  {
+                    "actionType": "reload",
+                    // "data": {
+                    //   "db_url": "${db_url}"
+                    // }
+                  }
+                ]
+              }
+            },
+            "headerToolbar": [
+              {
+                "type": "action",
+                "align": "right",
+                "icon": "iconfont icon-refresh",
+                "tooltip": "",
+                // "level": "primary",
+                "actionType": "reload",
+                "target": "tableSamples"
+              },
+              {
+                "type": "button",
+                "align": "right",
+                // "label": "Add",
+                "icon": "fa fa-plus",
+                "id": "u:539d3153a40e",
+                "size": "md",
+                "block": true,
+                "dialog": {
+                  "title": "New sample",
+                  "body": {
+                    "type": "service",
+                    "api": "get:${ls:db_url}/newId?userid=${userid}",
+                    "body": {
+                      "type": "form",
+                      // "debug": true,
+                      "mode": "horizontal",
+                      "title": "Sample Information",
+                      "submitText": "",
+                      "canAccessSuperData": false,
+                      "api": "post:${ls:db_url}/addSample",
+                      "data": {
+                        "uuid": "${uuid}",
+                        "name": "${name}",
+                        "base_uuid": 0,
+                        "base": "${base}",
+                        "comment": "${comment}",
+                        "obsoleted": 0,
+                        "userid": "${userid}",
+                        "sample_id": "${sample_id}"
+                      },
+                      "body": [
+                        "<canvas class='sweepcanvas' id='canvas'></canvas>",
+                        {
+                          "type": "input-text",
+                          "name": "uuid",
+                          "label": "Label code",
+                          // "id": "sample_id_input",
+                          "addOn": {
+                            "name": "scan2",
+                            "label": "",
+                            "icon": "fa fa-qrcode",
+                            "type": "button",
+                            "onClick": "sweep(props, 'uuid');"
+                          }
+                        },
+                        {
+                          "type": "input-text",
+                          "name": "sample_id",
+                          "label": "Sample ID"
+                        },
+                        {
+                          "type": "input-text",
+                          "name": "name",
+                          "label": "Name"
+                        },
+                        {
+                          "type": "input-text",
+                          "name": "comment",
+                          "label": "Comment"
+                        },
+                        {
+                          "type": "service",
+                          // "api": "get:${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}&column=base",
+                          "api": {
+                            "method": "get",
+                            "url": "${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}",
+                            "responseData": {
+                              "base": "${id}",
+                              "name": "${name}",
+                              "comment": "${comment}"
+                            }
+                          },
+                          // "canAccessSuperData": false,
+                          "body":
+                          {
+                            "type": "input-text",
+                            "name": "base",
+                            "label": "Base",
+                            // "id": "sample_id_input",
+                            "addOn": {
+                              "name": "scan1",
+                              "label": "",
+                              "icon": "fa fa-qrcode",
+                              "type": "button",
+                              "onClick": "sweep(props, 'base_uuid');"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "actionType": "dialog"
+              }
+            ],
+            "itemAction": {
+              "type": "button",
+              "actionType": "dialog",
+              "dialog": {
+                "title": "Sample",
+                "body": {
+                  "type": "form",
+                  "api": "post:${ls:db_url}/modSample",
+                  "data": {
+                    "uuid": "${uuid}",
+                    "sample_id": "${id}",
+                    "name": "${name}",
+                    "base_uuid": "${base_uuid}",
+                    "base": "${base}",
+                    "comment": "${comment}",
+                    "obsoleted": 0,
+                    "userid": "${userid}"
+                  },
+                  "body": [
+                    "<canvas class='sweepcanvas' id='canvas'></canvas>",
+                    {
+                      "type": "input-text",
+                      "name": "uuid",
+                      "label": "Label code",
+                      "disabled": true
+                      // "id": "sample_id_input",
+                      // "addOn": {
+                      //   "name": "scan2",
+                      //   "label": "",
+                      //   "icon": "fa fa-qrcode",
+                      //   "type": "button",
+                      //   "onClick": "sweep(props, 'uuid');"
+                      // }
+                    },
+                    {
+                      "type": "input-text",
+                      "name": "name",
+                      "label": "Name"
+                    },
+                    {
+                      "type": "service",
+                      // "api": "get:${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}&column=base",
+                      "api": {
+                        "method": "get",
+                        "url": "${ls:db_url}/searchUuid?uuid=${loc_uuid}&userid=${userid}",
+                        // "sendOn": "this.base_uuid !== undefined && this.base_uuid !== ''",
+                        "responseData": {
+                          "location": "${location}"
+                        }
+                      },
+                      // "canAccessSuperData": false,
+                      "body":
+                      {
+                        "type": "input-text",
+                        "name": "location",
+                        "label": "Location",
+                        // "id": "sample_id_input",
+                        "addOn": {
+                          "name": "scan1",
+                          "label": "",
+                          "icon": "fa fa-qrcode",
+                          "type": "button",
+                          "onClick": "sweep(props, 'loc_uuid');"
+                        }
+                      }
+                    },
+                    {
+                      "type": "input-text",
+                      "name": "comment",
+                      "label": "Comment"
+                    },
+                    {
+                      "type": "service",
+                      // "api": "get:${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}&column=base",
+                      "api": {
+                        "method": "get",
+                        "url": "${ls:db_url}/searchUuid?uuid=${base_uuid}&userid=${userid}",
+                        "sendOn": "this.base_uuid !== undefined && this.base_uuid !== ''",
+                        "responseData": {
+                          "base": "${id}"
+                        }
+                      },
+                      // "canAccessSuperData": false,
+                      "body":
+                      {
+                        "type": "input-text",
+                        "name": "base",
+                        "label": "Base",
+                        // "id": "sample_id_input",
+                        "addOn": {
+                          "name": "scan1",
+                          "label": "",
+                          "icon": "fa fa-qrcode",
+                          "type": "button",
+                          "onClick": "sweep(props, 'base_uuid');"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "actions": [
+                  {
+                    "label": "Delete",
+                    "type": "button",
+                    "actionType": "ajax",
+                    "close": true,
+                    "reload": "tableSamples",
+                    "level": "danger",
+                    "confirmText": "Comfirm to delete?",
+                    "api": "get:${ls:db_url}/delSample?uuid=${uuid}&userid=${userid}&sample_id=${id}"
+                  },
+                  {
+                    "type": "button",
+                    "actionType": "confirm",
+                    "label": "Modify",
+                    "primary": true
+                  },
+                  {
+                    "type": "button",
+                    "actionType": "cancel",
+                    "label": "Cancel",
+                    "primary": false
+                  }
+                ]
+              }
+            },
+            "columns": [
+              {
+                "name": "id",
+                "label": "ID",
+                "type": "text",
+                "id": "u:79e627cdc6d8"
+              },
+              {
+                "name": "name",
+                "label": "Name",
+                "type": "text",
+                "id": "u:0e3318813013"
+              },
+              // {
+              //   "type": "text",
+              //   "label": "Location",
+              //   "name": "loc_uuid",
+              //   "id": "u:e42e298cd2c1"
+              // },
+              {
+                "type": "text",
+                "label": "Comment",
+                "name": "comment",
+                "id": "u:cf4f52636712"
+              }
+            ],
+            "filterColumnCount": 3,
+            "id": "u:35f269e0b4f4",
+            "perPageAvailable": [
+              10
+            ],
+            // "messages": {
+            // },
+            "filter": {
+              // "debug": true,
+              "title": "Search",
+              "body": [
+                {
+                  "type": "group",
+                  "body": [
+                    {
+                      "type": "input-text",
+                      "name": "keyword",
+                      "label": "Keyword",
+                      "clearable": true,
+                      "size": "sm"
+                    }
+                  ]
+                }
+              ],
+              "actions": [
+                {
+                  "type": "reset",
+                  "label": "Reset"
+                },
+                {
+                  "type": "submit",
+                  "level": "primary",
+                  "label": "Search"
+                }
+              ]
+            },
+            "loadDataOnce": true
+          },
+          {
+            "type": "container",
+            "id": "u:228cea13e364",
+            "body": [
+              {
+                "type": "divider",
+                "id": "u:c902653ba98e"
+              }
+            ],
+            "style": {
+              "position": "static",
+              "display": "block"
+            },
+            "wrapperBody": false
+          },
+          {
+            "type": "flex",
+            "id": "u:d85e2e6ad8d8",
+            "isSorptionContainer": true,
+            "sorptionPosition": "bottom",
+            "className": "p-1",
+            "items": [
+              {
+                "type": "container",
+                "size": "xs",
+                "style": {
+                  "position": "static",
+                  "display": "flex",
+                  "flex": "1 1 auto",
+                  "flexGrow": 1,
+                  "flexBasis": "auto",
+                  "overflowX": "auto",
+                  "flexWrap": "nowrap",
+                  "justifyContent": "flex-end"
+                },
+                "wrapperBody": false,
+                "isFixedHeight": false,
+                "isFixedWidth": false,
+                "id": "u:409b32d12f95",
+                "body": [
+                  {
+                    "type": "button",
+                    "id": "u:a889ff681142",
+                    "block": false,
+                    "onClick": "sweep(props, sample_id);",
+                    "level": "primary",
+                    "size": "lg",
+                    "icon": "fa fa-qrcode",
+                    "label": "Scan"
+                  }
+                ]
+              }
+            ],
+            "style": {
+              "position": "fixed",
+              "inset": "auto auto 0 0",
+              "zIndex": 10,
+              "width": "100%",
+              "overflowX": "auto",
+              "margin": "0",
+              "overflowY": "auto",
+              "background": "rgba(255, 255, 255, 0)",
+              "flexWrap": "nowrap"
+            },
+            "isFixedWidth": true,
+            "isFixedHeight": false,
+            "originPosition": "right-bottom"
+          }
+        ],
+        "id": "u:d227ad9ac00e",
+        "asideResizor": false,
+        "pullRefresh": {
+          "disabled": true
+        },
+        "regions": [
+          "body",
+          "toolbar",
+          "header"
+        ],
+        "toolbar": [
+          {
+            "type": "button",
+            "label": "",
+            "icon": "fa fa-bars",
+            "onEvent": {
+              "click": {
+                "actions": [
+                  {
+                    "label": "Settings",
+                    "type": "button",
+                    "actionType": "drawer",
+                    "icon": "fa fa-plus",
+                    "drawer": {
+                      "title": "Settings",
+                      "closeOnOutside": true,
+                      "data": {
+                        "db_url": "${ls:db_url}"
+                      },
+                      "body": [
+                        {
+                          "label": "Server",
+                          "type": "select",
+                          "name": "db_url",
+                          // "actionType": "reload",
+                          // "target": "tableSamples",
+                          "options": [
+                            {
+                              "label": "Production",
+                              "value": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+                            },
+                            {
+                              "label": "Development:127.0.0.1:8000",
+                              "value": "http://127.0.0.1:8000"
+                            },
+                            {
+                              "label": "Development:192.168.76.26:8000",
+                              "value": "http://192.168.76.26:8000"
+                            },
+                            {
+                              "label": "Development:aliyun-dev",
+                              "value": "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
+                            }
+                          ],
+                          "onEvent": {
+                            "change": {
+                              "actions": [
+                                {
+                                  "actionType": "custom",
+                                  "script": "localStorage.setItem('db_url', event.data.db_url);"
+                                },
+                                {
+                                  "actionType": "broadcast",
+                                  "args": {
+                                    "eventName": "broadcast_reload_crud"
+                                  }
+                                  // "data": {
+                                  //   "db_url": "${db_url}"
+                                  // }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "id": "u:9fc6983eb6ed"
+          }
+        ]
+      };
+      let amisScoped = amis.embed(
+        '#root',
+        amisJSON,
+        {
+          locale: 'en-US'
+        }
+      );
+    })();
+  </script>
+  <script src="./js/jimp.js"></script>
+  <script src="./js/jsqr.min.js"></script>
+  <script src="./js/base.js"></script>
+  <script>
+    function sweep(props, parname) {
+      document.getElementById('canvas').requestFullscreen();
+      const QrCode = new QrCodeRecognition({
+        sweepId: '#canvas',
+        // uploadId: '#file',
+        error: function (err) {
+        },
+        seuccess: function (res) {
+          var dic = {}
+          dic[parname] = res.data
+          props.formStore.setValues(dic);
+          document.exitFullscreen();
+        }
+      });
+      // localStorage.setItem(out, "");
+      // result.value = '';
+      QrCode.sweep();
+    };
+    // 从相册选择
+    // function upload() {
+    //   result = '';
+    //   QrCode.upload();
+    // };
+  </script>
+
+</body>
+
+</html>

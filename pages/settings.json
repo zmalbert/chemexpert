@@ -1,0 +1,47 @@
+{
+  "type": "page",
+  "data": {
+    "db_url": "${ls:db_url}"
+  },
+  "body": [
+    {
+      "label": "Server",
+      "type": "select",
+      "name": "db_url",
+      "options": [
+        {
+          "label": "Production",
+          "value": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
+        },
+        {
+          "label": "Development:127.0.0.1:8000",
+          "value": "http://127.0.0.1:8000"
+        },
+        {
+          "label": "Development:192.168.76.26:8000",
+          "value": "http://192.168.76.26:8000"
+        },
+        {
+          "label": "Development:aliyun-dev",
+          "value": "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
+        }
+      ],
+      "onEvent": {
+        "change": {
+          "actions": [
+            {
+              "actionType": "custom",
+              "script": "localStorage.setItem('db_url', event.data.db_url);"
+            },
+            {
+              "actionType": "broadcast",
+              "args": {
+                "eventName": "broadcast_reload_crud"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]  
+}
