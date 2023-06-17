@@ -28,23 +28,6 @@
             "url": "/strore-points",
             "icon": "fa fa-map-marker",
             "schemaApi": "get:./pages/locations.json"
-          },
-          {
-            "lable": "Scan",
-            "url": "/scan",
-            "schemaApi": "get:./pages/scan.json",
-            "disabled": true
-          }
-        ]
-      },
-      {
-        "label": "Tasks",
-        "children": [
-          {
-            "label": "Tasks",
-            "icon": "fa fa-tasks",
-            "url": "/Tasks",
-            "schemaApi": "get:./pages/tasks.json"
           }
         ]
       },

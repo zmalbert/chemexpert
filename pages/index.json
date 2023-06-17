@@ -1,60 +1,22 @@
 {
   "type": "page",
-  "title": "ChemExpert",
-  "initApi": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run/wakeup",
+  "initApi": {
+    "method": "get",
+    "url": "${ls:db_url}/wakeup",
+    "requestAdaptor": "",
+    "adaptor": "",
+    "messages": {},
+    "dataType": "json"
+  },
   "body": [
     {
-      "type": "flex",
-      "id": "u:d85e2e6ad8d8",
-      "isSorptionContainer": true,
-      "sorptionPosition": "bottom",
-      "className": "p-1",
-      "items": [
-        {
-          "type": "container",
-          "size": "xs",
-          "style": {
-            "position": "static",
-            "display": "flex",
-            "flex": "1 1 auto",
-            "flexGrow": 1,
-            "flexBasis": "auto",
-            "overflowX": "auto",
-            "flexWrap": "nowrap",
-            "justifyContent": "flex-end"
-          },
-          "wrapperBody": false,
-          "isFixedHeight": false,
-          "isFixedWidth": false,
-          "id": "u:409b32d12f95",
-          "body": [
-            {
-              "type": "button",
-              "id": "u:a889ff681142",
-              "block": false,
-              "onClick": "sweep(props, sample_id);",
-              "level": "primary",
-              "size": "lg",
-              "icon": "fa fa-qrcode",
-              "label": "Scan"
-            }
-          ]
-        }
-      ],
-      "style": {
-        "position": "fixed",
-        "inset": "auto auto 0 0",
-        "zIndex": 10,
-        "width": "100%",
-        "overflowX": "auto",
-        "margin": "0",
-        "overflowY": "auto",
-        "background": "rgba(255, 255, 255, 0)",
-        "flexWrap": "nowrap"
-      },
-      "isFixedWidth": true,
-      "isFixedHeight": false,
-      "originPosition": "right-bottom"
+      "type": "alert",
+      "title": "No database",
+      "body": "If it is the first visiting, you have to set the database URL in the page <a href='/#/Settings'>settings<a>.",
+      "level": "warning",
+      "showIcon": true,
+      "className": "mb-3",
+      "visibleOn": "${ls:db_url===undefined || ls:db_url===''}"
     },
     {
       "type": "flex",
@@ -89,8 +51,7 @@
               "type": "tpl",
               "tpl": "Samples",
               "inline": true,
-              "wrapperComponent": "",
-              "id": "u:10450d4a5972"
+              "wrapperComponent": ""
             }
           ],
           "size": "xs",
@@ -116,16 +77,12 @@
             {
               "type": "button",
               "label": "",
-              "onEvent": {
-                "click": {
-                  "actions": []
-                }
-              },
-              "id": "u:e92ca5ded43f",
+              "actionType": "link",
+              "link": "/stroe-points",
               "size": "lg",
               "level": "primary",
               "block": false,
-              "icon": "fa fa-box-open fa-5x",
+              "icon": "fa fa-map-marker fa-5x",
               "themeCss": {
                 "className": {
                   "padding-and-margin:default": {
@@ -140,7 +97,7 @@
             },
             {
               "type": "tpl",
-              "tpl": "Locations",
+              "tpl": "Store points",
               "inline": true,
               "wrapperComponent": "",
               "id": "u:10450d4a5972"
@@ -169,16 +126,12 @@
             {
               "type": "button",
               "label": "",
-              "onEvent": {
-                "click": {
-                  "actions": []
-                }
-              },
-              "id": "u:e92ca5ded43f",
+              "actionType": "link",
+              "link": "/settings",
               "size": "lg",
               "level": "primary",
               "block": false,
-              "icon": "fa fa-list fa-5x",
+              "icon": "fa fa-cogs fa-5x",
               "themeCss": {
                 "className": {
                   "padding-and-margin:default": {
@@ -314,80 +267,7 @@
   "pullRefresh": {
     "disabled": true
   },
-  "regions": [
-    "body",
-    "toolbar",
-    "header"
-  ],
   "data": {},
-  "toolbar": [
-    {
-      "type": "button",
-      "label": "",
-      "onEvent": {
-        "click": {
-          "actions": [
-            {
-              "label": "Settings",
-              "type": "button",
-              "actionType": "drawer",
-              "icon": "fa fa-plus",
-              "drawer": {
-                "title": "Settings",
-                "body": [
-                  {
-                    "label": "Server",
-                    "type": "select",
-                    "name": "db_url",
-                    "options": [
-                      {
-                        "label": "Production",
-                        "value": "https://chemexpert-chemexpert-lyvzsxlxqf.cn-hangzhou.fcapp.run"
-                      },
-                      {
-                        "label": "Development:127.0.0.1:8000",
-                        "value": "http://127.0.0.1:8000"
-                      },
-                      {
-                        "label": "Development:192.168.76.26:8000",
-                        "value": "http://192.168.76.26:8000"
-                      },
-                      {
-                        "label": "Development:aliyun-dev",
-                        "value": "https://chemexpert-dev-chemexpert-dev-meeesosmdw.cn-hangzhou.fcapp.run"
-                      }
-                    ],
-                    "onEvent": {
-                      "change": {
-                        "actions": [
-                          {
-                            "actionType": "custom",
-                            "script": "localStorage.setItem('db_url', event.data.db_url);"
-                          },
-                          {
-                            "actionType": "broadcast",
-                            "args": {
-                              "eventName": "broadcast_reload_crud"
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  }
-                ],
-                "closeOnOutside": true,
-                "data": {
-                  "db_url": "${ls:db_url}"
-                }
-              }
-            }
-          ]
-        }
-      },
-      "id": "u:9fc6983eb6ed",
-      "icon": "fa fa-bars"
-    }
-  ],
   "style": {
     "background": "rgba(244, 134, 134, 0)"
   }

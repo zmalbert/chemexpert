@@ -6,6 +6,15 @@
   },
   "body": [
     {
+      "type": "alert",
+      "title": "No database",
+      "body": "If it is the first visiting, you have to set the database URL in the page <a href='/#/Settings'>settings<a>.",
+      "level": "warning",
+      "showIcon": true,
+      "className": "mb-3",
+      "visibleOn": "${ls:db_url===undefined || ls:db_url===''}"
+    },
+    {
       "type": "crud",
       "name": "tableSamples",
       "id": "tableSamples",
@@ -384,78 +393,6 @@
         "display": "block"
       },
       "wrapperBody": false
-    },
-    {
-      "type": "flex",
-      "id": "u:d85e2e6ad8d8",
-      "isSorptionContainer": true,
-      "sorptionPosition": "bottom",
-      "className": "p-1",
-      "items": [
-        {
-          "type": "container",
-          "size": "xs",
-          "style": {
-            "position": "static",
-            "display": "flex",
-            "flex": "1 1 auto",
-            "flexGrow": 1,
-            "flexBasis": "auto",
-            "overflowX": "auto",
-            "flexWrap": "nowrap",
-            "justifyContent": "flex-end"
-          },
-          "wrapperBody": false,
-          "isFixedHeight": false,
-          "isFixedWidth": false,
-          "id": "u:409b32d12f95",
-          "body": [
-            {
-              "type": "form",
-              "api": "",
-              "data": {
-                "scan_uuid": ""
-              },
-              "body": [
-                "<canvas class='sweepcanvas' id='canvas'></canvas>",
-                {
-                  "type": "button",
-                  "block": false,
-                  "level": "primary",
-                  "size": "lg",
-                  "icon": "fa fa-qrcode",
-                  "label": "Scan",
-                  "onEvent":{
-                    "click":{
-                      "actions": [
-                        {
-                          "actionType": "custom",
-                          "script2": "sweep(context.props, 'base_uuid');",
-                          "script1": "sweep(context.props, 'base_uuid');doAction({actionType: 'link',args: {'link': '/scan${ scan_uuid }'}});"
-                        }
-                      ]    
-                    }
-                  }
-                }
-              ]
-            }
-          ]
-        }
-      ],
-      "style": {
-        "position": "fixed",
-        "inset": "auto auto 0 0",
-        "zIndex": 10,
-        "width": "100%",
-        "overflowX": "auto",
-        "margin": "0",
-        "overflowY": "auto",
-        "background": "rgba(255, 255, 255, 0)",
-        "flexWrap": "nowrap"
-      },
-      "isFixedWidth": true,
-      "isFixedHeight": false,
-      "originPosition": "right-bottom"
     }
   ],
   "id": "u:d227ad9ac00e",
