@@ -221,6 +221,11 @@
               },
               {
                 "type": "input-text",
+                "name": "sample_id",
+                "label": "Sample ID"
+              },
+              {
+                "type": "input-text",
                 "name": "name",
                 "label": "Name"
               },
@@ -241,7 +246,7 @@
                     "level": "warning",
                     "showIcon": true,
                     "className": "mb-1",
-                    "visibleOn": "${loc_type!=='locations'}"
+                    "visibleOn": "${loc_type!=='locations' && loc_uuid!=='' && loc_uuid!==undefined}"
                   },
                   {
                     "type": "input-text",
@@ -280,7 +285,7 @@
                     "level": "warning",
                     "showIcon": true,
                     "className": "mb-1",
-                    "visibleOn": "${sample_type!=='samples'}"
+                    "visibleOn": "${sample_type!=='samples' && base!=='' && base!==undefined}"
                   },
                   {
                     "type": "input-text",
