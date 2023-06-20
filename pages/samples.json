@@ -117,7 +117,7 @@
                         "base": "${id}",
                         "name": "${name}",
                         "comment": "${comment}",
-                        "type": "${type}"
+                        "sample_type": "${type}"
                       }
                     },
                     "body": [
@@ -152,7 +152,7 @@
                       "responseData": {
                         "loc_uuid": "${uuid}",
                         "location": "${location}",
-                        "type": "${type}"
+                        "loc_type": "${type}"
                       }
                     },
                     "body": [
