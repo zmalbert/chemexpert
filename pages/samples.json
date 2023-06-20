@@ -127,7 +127,7 @@
                         "level": "warning",
                         "showIcon": true,
                         "className": "mb-1",
-                        "visibleOn": "${type!=='samples'}"
+                        "visibleOn": "${sample_type!=='samples' && base!=='' && base!==undefined}"
                       },
                       {
                         "type": "input-text",
@@ -162,7 +162,7 @@
                         "level": "warning",
                         "showIcon": true,
                         "className": "mb-1",
-                        "visibleOn": "${type!=='locations'}"
+                        "visibleOn": "${loc_type!=='locations' && loc_uuid!=='' && loc_uuid!==undefined}"
                       },
                       {
                         "type": "input-text",
