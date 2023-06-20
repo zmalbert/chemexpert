@@ -3,7 +3,7 @@
     "short_name": "ChemExpert",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#333",
+    "background_color": "#151b26",
     "description": "一站式化学实验记录平台",
     "orientation": "portrait-primary",
     "theme_color": "#5eace0",
