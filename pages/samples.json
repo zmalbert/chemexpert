@@ -127,7 +127,7 @@
                         "level": "warning",
                         "showIcon": true,
                         "className": "mb-1",
-                        "visibleOn": "${sample_type!=='samples' && base!=='' && base!==undefined}"
+                        "visibleOn": "${sample_type!=='samples' && sample_type!=='' && sample_type!==undefined}"
                       },
                       {
                         "type": "input-text",
@@ -162,7 +162,7 @@
                         "level": "warning",
                         "showIcon": true,
                         "className": "mb-1",
-                        "visibleOn": "${loc_type!=='locations' && loc_uuid!=='' && loc_uuid!==undefined}"
+                        "visibleOn": "${loc_type!=='locations' && loc_type!=='' && loc_type!==undefined}"
                       },
                       {
                         "type": "input-text",
@@ -246,7 +246,7 @@
                     "level": "warning",
                     "showIcon": true,
                     "className": "mb-1",
-                    "visibleOn": "${loc_type!=='locations' && loc_uuid!=='' && loc_uuid!==undefined}"
+                    "visibleOn": "${loc_type!=='locations' && loc_type!=='' && loc_type!==undefined}"
                   },
                   {
                     "type": "input-text",
@@ -285,7 +285,7 @@
                     "level": "warning",
                     "showIcon": true,
                     "className": "mb-1",
-                    "visibleOn": "${sample_type!=='samples' && base!=='' && base!==undefined}"
+                    "visibleOn": "${sample_type!=='samples' && sample_type!=='' && sample_type!==undefined}"
                   },
                   {
                     "type": "input-text",

@@ -1,22 +1,26 @@
 {
   "type": "page",
-  "initApi": {
-    "method": "get",
-    "url": "${ls:db_url}/wakeup",
-    "requestAdaptor": "",
-    "adaptor": "",
-    "messages": {},
-    "dataType": "json"
-  },
+  "initApi": {},
   "body": [
     {
-      "type": "alert",
-      "title": "No database",
-      "body": "If it is the first visiting, you have to set the database URL in the page <a href='/#/Settings'>settings<a>.",
-      "level": "warning",
-      "showIcon": true,
-      "className": "mb-3",
-      "visibleOn": "${ls:db_url===undefined || ls:db_url===''}"
+      "type": "service",
+      "api": {
+        "method": "get",
+        "url": "${ls:db_url}/wakeup",
+        "requestAdaptor": "",
+        "adaptor": "",
+        "messages": {},
+        "dataType": "json"
+      },
+      "body": {
+        "type": "alert",
+        "title": "No database",
+        "body": "If it is the first visiting, you have to set the database URL in the page <a href='/#/Settings'>settings</a>.",
+        "level": "warning",
+        "showIcon": true,
+        "className": "mb-3",
+        "visibleOn": "${ls:db_url===undefined || ls:db_url===''}"
+      }
     },
     {
       "type": "flex",
