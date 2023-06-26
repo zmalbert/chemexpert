@@ -278,8 +278,11 @@
                   },
                   {
                     "type": "input-text",
-                    "name": "location",
-                    "label": "Location",
+                    "name": "loc_uuid",
+                    "label": "Location code",
+                    "labelField": "location",
+                    "valueField": "uuid",
+                    "source": "${ls:db_url}/getLocations?userid=${userid}",
                     "addOn": {
                       "name": "scan1",
                       "label": "",
@@ -287,6 +290,12 @@
                       "type": "button",
                       "onClick": "sweep(props, 'loc_uuid');"
                     }
+                  },
+                  {
+                    "type": "input-text",
+                    "name": "location",
+                    "label": "Location",
+                    "disabled": true
                   }
                 ]
               },
