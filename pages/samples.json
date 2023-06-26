@@ -84,6 +84,7 @@
                     "type": "input-text",
                     "name": "uuid",
                     "label": "Label code",
+                    "clearable": true,
                     "addOn": {
                       "name": "scan2",
                       "label": "",
@@ -95,17 +96,20 @@
                   {
                     "type": "input-text",
                     "name": "sample_id",
-                    "label": "Sample ID"
+                    "label": "Sample ID",
+                    "clearable": true
                   },
                   {
                     "type": "input-text",
                     "name": "name",
-                    "label": "Name"
+                    "label": "Name",
+                    "clearable": true
                   },
                   {
                     "type": "input-text",
                     "name": "comment",
-                    "label": "Comment"
+                    "label": "Comment",
+                    "clearable": true
                   },
                   {
                     "type": "service",
@@ -133,6 +137,7 @@
                         "type": "input-text",
                         "name": "base",
                         "label": "Base",
+                        "clearable": true,
                         "addOn": {
                           "name": "scan1",
                           "label": "",
@@ -168,9 +173,15 @@
                         "type": "input-text",
                         "name": "loc_uuid",
                         "label": "Location code",
+                        "clearable": true,
                         "labelField": "location",
                         "valueField": "uuid",
-                        "source": "${ls:db_url}/getLocations?userid=${userid}",
+                        "_source": "${ls:db_url}/getLocations?userid=${userid}",
+                        "source": {
+                          "method": "get",
+                          "url": "${ls:db_url}/getLocations?userid=${userid}",
+                          "sendOn": "this.loc_uuid !== undefined && this.loc_uuid !== ''"
+                        },
                         "addOn": {
                           "name": "scan1",
                           "label": "",
@@ -239,6 +250,7 @@
                 "name": "uuid",
                 "label": "Label code",
                 "disabled": false,
+                "clearable": true,
                 "addOn": {
                   "name": "scan2",
                   "label": "",
@@ -250,12 +262,14 @@
               {
                 "type": "input-text",
                 "name": "sample_id",
-                "label": "Sample ID"
+                "label": "Sample ID",
+                "clearable": true
               },
               {
                 "type": "input-text",
                 "name": "name",
-                "label": "Name"
+                "label": "Name",
+                "clearable": true
               },
               {
                 "type": "service",
@@ -279,10 +293,16 @@
                   {
                     "type": "input-text",
                     "name": "loc_uuid",
+                    "clearable": true,
                     "label": "Location code",
                     "labelField": "location",
                     "valueField": "uuid",
-                    "source": "${ls:db_url}/getLocations?userid=${userid}",
+                    "_source": "${ls:db_url}/getLocations?userid=${userid}",
+                    "source": {
+                      "method": "get",
+                      "url": "${ls:db_url}/getLocations?userid=${userid}",
+                      "sendOn": "this.loc_uuid !== undefined && this.loc_uuid !== ''"
+                    },
                     "addOn": {
                       "name": "scan1",
                       "label": "",
