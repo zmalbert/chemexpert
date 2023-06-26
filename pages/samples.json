@@ -190,11 +190,24 @@
         "actionType": "dialog",
         "dialog": {
           "title": "Sample",
+          "data": {
+            "uuid": "${uuid}",
+            "uuid_anchor": "${uuid}",
+            "id": "${id}",
+            "name": "${name}",
+            "base_uuid": "${base_uuid}",
+            "base": "${base}",
+            "comment": "${comment}",
+            "obsoleted": 0,
+            "userid": "${userid}",
+            "loc_uuid": "${loc_uuid}"
+          },
           "body": {
             "type": "form",
             "api": "post:${ls:db_url}/modSample",
             "data": {
               "uuid": "${uuid}",
+              "uuid_anchor": "${uuid_anchor}",
               "sample_id": "${id}",
               "name": "${name}",
               "base_uuid": "${base_uuid}",
@@ -206,6 +219,12 @@
             },
             "body": [
               "<canvas class='sweepcanvas' id='canvas'></canvas>",
+              {
+                "type": "input-text",
+                "name": "uuid_anchor",
+                "label": "Old label code",
+                "visible": false
+              },
               {
                 "type": "input-text",
                 "name": "uuid",
