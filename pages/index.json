@@ -150,7 +150,7 @@
             },
             {
               "type": "tpl",
-              "tpl": "Locations",
+              "tpl": "Settings",
               "inline": true,
               "wrapperComponent": "",
               "id": "u:10450d4a5972"

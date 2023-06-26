@@ -55,11 +55,11 @@
           "size": "md",
           "block": true,
           "dialog": {
-            "title": "New location",
+            "title": "New store point",
             "body": {
               "type": "form",
               "mode": "horizontal",
-              "title": "Location Information",
+              "title": "Store point Information",
               "submitText": "",
               "canAccessSuperData": false,
               "api": "post:${ls:db_url}/addLocation",
@@ -98,7 +98,7 @@
         "type": "button",
         "actionType": "dialog",
         "dialog": {
-          "title": "Location",
+          "title": "Store point",
           "body": {
             "type": "form",
             "api": "post:${ls:db_url}/modLocation",
@@ -158,7 +158,7 @@
         },
         {
           "name": "location",
-          "label": "Location",
+          "label": "Store points",
           "type": "text",
           "id": "u:0e3318813013"
         }
